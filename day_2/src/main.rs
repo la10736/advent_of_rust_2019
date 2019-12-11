@@ -3,21 +3,42 @@ use std::{fs, env};
 fn main() {
 
     let path = env::args().nth(1).expect("Input file name");
+    let expected_result = env::args().nth(2).map(|b| b.parse::<u32>().unwrap());
     let contents = fs::read_to_string(path)
         .expect("Something went wrong reading the file");
 
     let ram: Result<Vec<u32>, _> = contents.split(',')
                     .map(|code| code.parse())
                     .collect();
-    let mut ram = ram.unwrap();
-    
-    // Restore 1202 program alarm state
-    ram[1] = 12;
-    ram[2] = 2;
- 
-    run_program(ram.as_mut_slice(), 0).expect("Should find hatl!");
+    let ram = ram.unwrap();
 
-    println!("Value at positioon 0 = {}", ram[0])
+    if let Some(ex) = expected_result {
+        for state in 0..=9999 {
+            match execute_program(&ram, state) {
+                Ok(res) if res == ex => {
+                            println!("Valid initial state is = {}", state);
+                            return
+                        }
+                r => {
+                    println!("Excluded state {}: {:?}", state, r);       
+                }
+            }
+        }
+    } else {
+        let result = execute_program(&ram, 1202).expect("Should find hatl!");
+        println!("Value at positioon 0 = {}", result)
+    }
+}
+
+fn execute_program(program: &[u32], initial_state: u32) -> Result<u32, String> {
+    let mut ram = program.to_vec();
+
+    ram[1] = initial_state/100;
+    ram[2] = initial_state%100;
+
+    run_program(ram.as_mut_slice(), 0)?;
+
+    Ok(ram[0])
 }
 
 #[derive(Debug, PartialEq, Eq)]
