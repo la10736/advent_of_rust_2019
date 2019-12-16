@@ -98,7 +98,7 @@ mod intcode_shoud {
     use super::*;
     use rstest::*;
 
-    #[rstest_parametrize(
+    #[rstest(
         code, asm,
         case(vec![99], Asm::Halt),
         case(vec![1,2,3,4], Asm::Add(2, 3, 4)),
@@ -110,7 +110,7 @@ mod intcode_shoud {
         assert_eq!(asm, get_op_code(code.as_ref()));
     }
 
-    #[rstest_parametrize(
+    #[rstest(
         asm, len, 
         case(Asm::Halt, 1),
         case(Asm::Add(2, 3, 4), 4),
@@ -122,7 +122,7 @@ mod intcode_shoud {
         assert_eq!(asm.len(), len);
     }
 
-    #[rstest_parametrize(
+    #[rstest(
         ram, pos, expected, executed,
         case::add(vec![1,9,10,3,2,3,11,0,99,30,40,50], 0, vec![1,9,10,70,2,3,11,0,99,30,40,50], Asm::Add(9, 10, 3)),
         case::mult(vec![1,9,10,70,2,3,11,0,99,30,40,50], 4, vec![3500,9,10,70,2,3,11,0,99,30,40,50], Asm::Mult(3, 11, 0)),

@@ -30,7 +30,7 @@ mod tests {
     use super::*;
     use rstest::*;
 
-    #[rstest_parametrize(mass, expected_fuel,
+    #[rstest(mass, expected_fuel,
         case(12, 2),
         case(14, 2),
         case(1969, 654),
@@ -40,7 +40,7 @@ mod tests {
         assert_eq!(mass_to_fuel(mass), expected_fuel);
     }
 
-    #[rstest_parametrize(mass, expected_fuel,
+    #[rstest(mass, expected_fuel,
         case(14, 2),
         case(1969, 966),
         case(100756, 50346),
