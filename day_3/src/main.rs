@@ -125,19 +125,31 @@ fn cross(a: &Segment, b: &Segment) -> Option<Position> {
 pub fn minimum_cross_distance(first: Moves, second: Moves) -> Option<usize> {
     let first = Path::from(first);
     let second = Path::from(second);
-    let mut distances = Vec::new();
 
-    for segment1 in &first.0[1..] {
-        for segment2 in &second.0[1..] {
-            if let Some(p) = cross(segment1, segment2) {
-                let distance = dbg!(dbg!(p).manathan_distance(Default::default()));
-                distances.push(distance)
+    first.0.iter()
+        .skip(1)
+        .flat_map(|seg1|
+            second.0.iter()
+                .skip(1)
+                .filter_map({
+                    let seg1 = seg1.clone();
+                    move |seg2| 
+                    cross(&seg1, &seg2).map(|p| p.manathan_distance(Default::default()))
+                }
+            )
+        )
+        .min()
 
-            }
-        }
-    }
+    // for segment1 in &first.0[1..] {
+    //     for segment2 in &second.0[1..] {
+    //         if let Some(p) = cross(segment1, segment2) {
+    //             let distance = p.manathan_distance(Default::default());
+    //             distances.push(distance)
+    //         }
+    //     }
+    // }
 
-    distances.into_iter().min()
+    // distances.into_iter().min()
 }
 
 #[cfg(test)]
