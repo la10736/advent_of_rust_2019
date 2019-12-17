@@ -1,7 +1,21 @@
 use std::str::FromStr;
+use std::env;
+use std::fs;
 
 fn main() {
-    println!("Hello, world!");
+    let path = env::args().nth(1).expect("Input file name");
+    let mut paths = fs::read_to_string(path)
+        .expect("Something went wrong reading the file")
+        .lines()
+        .map(|l| l.parse().expect("Cannot parse path"))
+        .collect::<Vec<_>>();
+
+    let second_path = paths.pop().expect("Should be two paths");
+    let first_path = paths.pop().unwrap();
+
+    let distance = minimum_cross_distance(first_path, second_path).expect("There should be at least a cros");
+
+    println!("distance = {:#?}", distance );
 }
 
 #[derive(PartialEq, Debug, Copy, Clone)]
@@ -139,17 +153,6 @@ pub fn minimum_cross_distance(first: Moves, second: Moves) -> Option<usize> {
             )
         )
         .min()
-
-    // for segment1 in &first.0[1..] {
-    //     for segment2 in &second.0[1..] {
-    //         if let Some(p) = cross(segment1, segment2) {
-    //             let distance = p.manathan_distance(Default::default());
-    //             distances.push(distance)
-    //         }
-    //     }
-    // }
-
-    // distances.into_iter().min()
 }
 
 #[cfg(test)]
